@@ -1,9 +1,14 @@
 package app.growject.dto;
 
-import lombok.Data;
+import lombok.*;
+
 import java.util.List;
 
-@Data // Lombok pour Getters/Setters/ToString/EqualsAndHashCode
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 public class RegisterRequestDto {
     private String name;
     private String email;
