@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
@@ -128,6 +129,9 @@ public class ProjectService {
         }
 
         return mapToProjectResponseDto(project);
+    }
+    public Optional<Project> getProjectEntityById(Long projectId) {
+        return projectRepository.findById(projectId);
     }
 
     // --- MAPPERS ---

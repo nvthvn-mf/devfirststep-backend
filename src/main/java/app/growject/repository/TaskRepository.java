@@ -15,4 +15,6 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     // Trouver la tâche de plus haut index pour un projet et un statut donnés, pour insérer la prochaine
     // Nécessaire pour optimiser l'insertion de nouvelles tâches
     Task findTopByProjectIdAndStatusOrderByOrderIndexDesc(Long projectId, app.growject.entity.TaskStatus status);
+
+    List<Task> findByProjectId(Long projectId);
 }
