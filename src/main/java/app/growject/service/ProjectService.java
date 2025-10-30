@@ -10,7 +10,6 @@ import app.growject.entity.User;
 import app.growject.repository.ProjectRepository;
 import app.growject.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -18,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
@@ -27,8 +25,7 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 @RequiredArgsConstructor
 public class ProjectService {
 
-    @Autowired
-    UserService userService;
+
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository; // Pour récupérer l'Owner
 
@@ -36,7 +33,7 @@ public class ProjectService {
     // la logique de mapping User -> UserResponseDto, mais le faire ici est simple pour le MVP.
 
     // Récupère l'utilisateur à partir de l'email pour l'associer au projet
-    private User findUserByEmail(String userEmail) {
+    public User findUserByEmail(String userEmail) {
         return userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new UsernameNotFoundException("Utilisateur non trouvé: " + userEmail));
     }
@@ -161,10 +158,5 @@ public class ProjectService {
                 .ownerName(project.getOwner().getName())
                 .build();
     }
-    public boolean hasRights(Long projectId, String userEmail) {
-        UserResponseDto user = userService.getProfile(userEmail);
-        Optional<Project> project = projectRepository.findById(projectId);
-        return project.get().getOwner().getEmail().equals(userEmail);
 
-    }
 }

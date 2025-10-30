@@ -23,6 +23,7 @@ public class UserService {
         return mapToUserResponseDto(user);
     }
 
+
     /**
      * Met à jour les informations de profil de l'utilisateur.
      */

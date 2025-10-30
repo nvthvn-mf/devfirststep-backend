@@ -15,6 +15,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -158,5 +160,81 @@ public class ProjectServiceTest {
         // Exécution et vérification (l'utilisateur TEST_EMAIL essaie de voir le projet de 'other@email.com')
         assertThrows(SecurityException.class, () -> projectService.getProjectDetails(11L, TEST_EMAIL));
         verify(projectRepository, times(1)).findById(11L);
+    }
+
+    @Test
+    void testUpdateProjectSuccess() {
+        // GIVEN: L'utilisateur existe, le projet existe et lui appartient.
+        when(projectRepository.findById(TEST_PROJECT_ID)).thenReturn(Optional.of(mockProject));
+        when(projectRepository.save(any(Project.class))).thenReturn(mockProject);
+        when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.of(mockOwner));
+
+        // Requête de mise à jour
+        ProjectCreationRequestDto updateRequest = new ProjectCreationRequestDto();
+        updateRequest.setName("Nom mis à jour");
+        updateRequest.setDescription("Description mise à jour");
+
+        // WHEN
+        ProjectResponseDto response = projectService.updateProject(TEST_EMAIL, updateRequest, TEST_PROJECT_ID);
+
+        // THEN
+        assertNotNull(response);
+        assertEquals("Nom mis à jour", response.getName());
+        assertEquals("Description mise à jour", response.getDescription());
+
+        // Vérification de la sauvegarde
+        verify(projectRepository, times(1)).save(any(Project.class));
+    }
+
+    @Test
+    void testUpdateProjectThrowsAccessDeniedIfNotOwner() {
+        // GIVEN: Le projet existe mais appartient à un autre utilisateur.
+
+        User otherOwner = User.builder().email("other@email.com").id(99L).build();
+        Project otherProject = Project.builder()
+                .id(11L)
+                .owner(otherOwner)
+                .build();
+        when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.of(mockOwner));
+        when(projectRepository.findById(11L)).thenReturn(Optional.of(otherProject));
+
+        // WHEN & THEN: L'utilisateur TEST_EMAIL ne peut pas le modifier.
+        assertThrows(AccessDeniedException.class,
+                () -> projectService.updateProject(TEST_EMAIL, creationRequest, 11L));
+
+        // Vérification qu'aucune sauvegarde n'a eu lieu
+        verify(projectRepository, never()).save(any(Project.class));
+    }
+
+    @Test
+    void testDeleteProjectSuccess() {
+        // GIVEN: Le projet existe et appartient à l'utilisateur.
+        when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.of(mockOwner));
+        when(projectRepository.findById(TEST_PROJECT_ID)).thenReturn(Optional.of(mockProject));
+
+        // WHEN
+        projectService.deleteProject(TEST_EMAIL, TEST_PROJECT_ID);
+
+        // THEN: Vérification de l'appel à la suppression
+        verify(projectRepository, times(1)).delete(mockProject);
+    }
+
+    @Test
+    void testDeleteProjectThrowsAccessDeniedIfNotOwner() {
+        // GIVEN: Le projet existe mais appartient à un autre utilisateur.
+        User otherOwner = User.builder().email("other@email.com").id(99L).build();
+        Project otherProject = Project.builder()
+                .id(11L)
+                .owner(otherOwner)
+                .build();
+        when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.of(mockOwner));
+        when(projectRepository.findById(11L)).thenReturn(Optional.of(otherProject));
+
+        // WHEN & THEN: L'utilisateur TEST_EMAIL ne peut pas le supprimer.
+        assertThrows(ResponseStatusException.class,
+                () -> projectService.deleteProject(TEST_EMAIL, 11L));
+
+        // Vérification qu'aucune suppression n'a eu lieu
+        verify(projectRepository, never()).delete(any(Project.class));
     }
 }
