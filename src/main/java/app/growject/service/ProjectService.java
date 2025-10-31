@@ -134,6 +134,29 @@ public class ProjectService {
         return projectRepository.findById(projectId);
     }
 
+    /**
+     * Vérifie l'existence du projet par ID et s'assure que l'utilisateur est le propriétaire.
+     * Cette méthode est utilisée par TaskService et DashboardService pour la sécurité.
+     * @return L'entité Project si l'utilisateur est le propriétaire.
+     * @throws ResponseStatusException (404) si non trouvé.
+     * @throws AccessDeniedException (403) si non propriétaire.
+     */
+    public Project getOwnedProject(Long projectId, String userEmail) {
+        // 1. Récupérer le projet (ou lancer 404)
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Projet non trouvé."));
+
+        // 2. Récupérer l'utilisateur (ou lancer 404/UsernameNotFound)
+        User currentUser = findUserByEmail(userEmail);
+
+        // 3. Vérification de la propriété
+        if (!project.getOwner().equals(currentUser)) {
+            throw new AccessDeniedException("Accès refusé : ce projet ne vous appartient pas.");
+        }
+
+        return project;
+    }
+
     // --- MAPPERS ---
 
     private ProjectResponseDto mapToProjectResponseDto(Project project) {

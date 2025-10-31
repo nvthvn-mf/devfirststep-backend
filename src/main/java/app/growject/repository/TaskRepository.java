@@ -17,4 +17,5 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     Task findTopByProjectIdAndStatusOrderByOrderIndexDesc(Long projectId, app.growject.entity.TaskStatus status);
 
     List<Task> findByProjectId(Long projectId);
+
 }
