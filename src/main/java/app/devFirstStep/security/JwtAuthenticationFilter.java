@@ -23,7 +23,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final UserDetailsService userDetailsService;
 
     // Le UserDetailsService est le bean que nous avons défini dans ApplicationConfig
-    // qui utilise votre UserRepository pour charger l'utilisateur par email.
+    // qui utilise notre UserRepository pour charger l'utilisateur par email.
 
     @Override
     protected void doFilterInternal(
