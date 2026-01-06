@@ -2,6 +2,7 @@ package app.devFirstStep.controller;
 
 import app.devFirstStep.dto.ProfileUpdateRequestDto;
 import app.devFirstStep.dto.UserResponseDto; // Nous allons créer ce DTO pour la réponse
+import app.devFirstStep.entity.User;
 import app.devFirstStep.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,9 +22,7 @@ public class UserController {
      * Le token JWT dans l'en-tête est utilisé pour identifier l'utilisateur via @AuthenticationPrincipal.
      */
     @GetMapping("/profile")
-    public ResponseEntity<UserResponseDto> getProfile(
-            // Le UserDetails (votre entité User) est injecté directement par Spring Security.
-            @AuthenticationPrincipal UserDetails userDetails
+    public ResponseEntity<UserResponseDto> getProfile( @AuthenticationPrincipal UserDetails userDetails
     ) {
         // Le nom d'utilisateur (email) est récupéré, puis le service cherche l'utilisateur complet
         UserResponseDto profile = userService.getProfile(userDetails.getUsername());
@@ -41,6 +40,16 @@ public class UserController {
         // Le service gère la logique de mise à jour et retourne le DTO mis à jour
         UserResponseDto updatedProfile = userService.updateProfile(userDetails.getUsername(), request);
         return ResponseEntity.ok(updatedProfile);
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<UserResponseDto> getCurrentUser(@AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(UserResponseDto.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .name(user.getName())
+                .level(user.getLevel() != null ? user.getLevel().name() : null)
+                .build());
     }
 
     // TODO: Vous pouvez ajouter ici d'autres méthodes (ex: changer le mot de passe)
