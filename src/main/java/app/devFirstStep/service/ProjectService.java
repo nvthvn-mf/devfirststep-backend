@@ -180,6 +180,7 @@ public class ProjectService {
         return ProjectSummaryDto.builder()
                 .id(project.getId())
                 .name(project.getName())
+                .description(project.getDescription())
                 .status(project.getStatus())
                 .createdAt(project.getCreatedAt())
                 .ownerName(project.getOwner().getName())

@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 public class ProjectSummaryDto {
     private Long id;
     private String name;
+    private String description;
     private ProjectStatus status;
     private LocalDateTime createdAt;
     private String ownerName;
