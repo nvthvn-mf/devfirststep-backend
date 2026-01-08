@@ -32,11 +32,15 @@ public class AuthenticationService {
         if (repository.existsByEmail(request.getEmail())) {
             throw new IllegalArgumentException("L'email est déjà utilisé.");
         }
+        if (repository.existsByTag(request.getTag())) {
+            throw new IllegalArgumentException("Le tag est déjà utilisé.");
+        }
 
         // Créer l'entité User à partir du DTO
         var user = User.builder()
                 .name(request.getName())
                 .email(request.getEmail())
+                .tag(request.getTag())
                 // TODO: Crypter le mot de passe avant de le sauvegarder
                 .password(passwordEncoder.encode(request.getPassword()))
                 .bio(request.getBio())

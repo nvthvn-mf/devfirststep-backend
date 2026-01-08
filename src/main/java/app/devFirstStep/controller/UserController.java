@@ -47,6 +47,7 @@ public class UserController {
         return ResponseEntity.ok(UserResponseDto.builder()
                 .id(user.getId())
                 .email(user.getEmail())
+                .tag(user.getTag())
                 .name(user.getName())
                 .level(user.getLevel() != null ? user.getLevel().name() : null)
                 .build());

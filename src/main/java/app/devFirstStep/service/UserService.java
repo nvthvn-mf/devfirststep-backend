@@ -58,6 +58,7 @@ public class UserService {
                 .id(user.getId())
                 .name(user.getName())
                 .email(user.getEmail())
+                .tag(user.getTag())
                 .bio(user.getBio())
                 .avatarUrl(user.getAvatarUrl())
                 .skills(user.getSkills())

@@ -12,6 +12,7 @@ import java.util.List;
 public class RegisterRequestDto {
     private String name;
     private String email;
+    private String tag;
     private String password;
     private String bio;
     private List<String> skills;
