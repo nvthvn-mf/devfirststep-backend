@@ -32,8 +32,14 @@ public class UserService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé."));
 
+        if (userRepository.existsByTag(request.getTag())) {
+            throw new IllegalArgumentException("Le tag est déjà utilisé.");
+        }
+
+
         // 1. Mettre à jour les champs
         if (request.getName() != null) user.setName(request.getName());
+        if(request.getTag() != null) user.setTag(request.getTag());
         if (request.getBio() != null) user.setBio(request.getBio());
         if (request.getAvatarUrl() != null) user.setAvatarUrl(request.getAvatarUrl());
 

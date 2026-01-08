@@ -13,6 +13,7 @@ import java.util.List;
 public class ProfileUpdateRequestDto {
 
     private String name;
+    private String tag;
     private String bio;
     private String avatarUrl;
     private List<String> skills;
