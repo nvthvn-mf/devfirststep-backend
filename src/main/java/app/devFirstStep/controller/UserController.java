@@ -1,7 +1,7 @@
 package app.devFirstStep.controller;
 
 import app.devFirstStep.dto.ProfileUpdateRequestDto;
-import app.devFirstStep.dto.UserResponseDto; // Nous allons créer ce DTO pour la réponse
+import app.devFirstStep.dto.UserResponseDto;
 import app.devFirstStep.entity.User;
 import app.devFirstStep.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/user")
+@RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -52,5 +52,4 @@ public class UserController {
                 .build());
     }
 
-    // TODO: Vous pouvez ajouter ici d'autres méthodes (ex: changer le mot de passe)
 }
